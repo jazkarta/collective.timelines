@@ -85,7 +85,8 @@ class TimeLineContent(grok.Adapter):
 
         subject = context.Subject()
         if subject:
-            data['tag'] = ', '.join(subject)
+            # Take the first keyword, somewhat arbitrarily
+            data['tag'] = subject[0]
 
         data['asset'] = {}
         # Links
