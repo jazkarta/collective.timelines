@@ -100,13 +100,16 @@ class TimelineContent(object):
         if context.getField('remoteUrl'):
             data['asset']['media'] = context.getField('remoteUrl').get(context)
         elif not ignore_date:
-            # Don't link to timeline itself
-            data['asset']['media'] = context.absolute_url()
+            # Include a url to the content
+            data['text'] = (data['text'] +
+                    ' <a href="%s">more &hellip;</a>'%context.absolute_url())
 
         image_url = self._get_image_url()
         # Items with Images
         if image_url:
             data['asset']['thumbnail'] = image_url
+            if 'media' not in data['asset']:
+                data['asset']['media'] = image_url
 
         # News-like items
         if 'asset' in data and context.getField('imageCaption'):
