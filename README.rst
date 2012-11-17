@@ -1,8 +1,8 @@
 Introduction
 ============
 
-This package integrates the `Verite TimelineJS <http://timeline.verite.co/>`_
-tool into Plone.  Providing a beautiful, customizable timeline view
+This package which integrates the `Verite TimelineJS <http://timeline.verite.co/>`_
+application into Plone.  Providing a beautiful, customizable timeline view
 for folders and collections.
 
 It adds a view ``timeline-view`` for Folders and new and old-style
