@@ -7,7 +7,6 @@ def revert_type_actions(context):
     if context.readDataFile('remove_types.txt') is None:
         return
     portal = context.getSite()
-    import pdb; pdb.set_trace()
     ptypes = getToolByName(portal, 'portal_types')
     for t in VIEW_TYPES:
         if t not in ptypes.objectIds():
