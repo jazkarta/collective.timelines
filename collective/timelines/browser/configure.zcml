@@ -1,0 +1,57 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="collective.timelines">
+
+  <grok:grok package="." />
+
+  <adapter factory=".configuration.TimelineStorage"
+           for="zope.interface.Interface"
+           provides=".configuration.ITimelineSettings"
+           />
+
+  <browser:resourceDirectory
+      name="timelines"
+      directory="timelines"
+      />
+
+  <browser:page
+      name="timeline-view"
+      for="*"
+      class=".view.TimelineView"
+      template="timeline_view.pt"
+      permission="zope2.View"
+      />
+  <browser:menuItem
+        for="*"
+        menu="plone_displayviews"
+        title="Timeline View"
+        action="timeline-view"
+        description="Dislpay contents in a timeline"
+        />
+
+  <browser:page
+      name="timeline-json"
+      for="Products.ATContentTypes.interfaces.IATFolder"
+      class=".view.TimelineFolderJSON"
+      permission="zope2.View"
+      />
+  <browser:page
+      name="timeline-json"
+      for="Products.ATContentTypes.interfaces.IATTopic"
+      class=".view.TimelineTopicJSON"
+      permission="zope2.View"
+      />
+  <configure zcml:condition="installed plone.app.collection">
+    <browser:page
+        name="timeline-json"
+        for="plone.app.collection.interfaces.ICollection"
+        class=".view.TimelineCollectionJSON"
+        permission="zope2.View"
+        />
+  </configure>
+
+</configure>

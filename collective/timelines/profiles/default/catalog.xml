@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object name="portal_catalog">
+    <index name="timeline_date" meta_type="DateIndex">
+        <indexed_attr value="timeline_date"/>
+    </index>
+</object>

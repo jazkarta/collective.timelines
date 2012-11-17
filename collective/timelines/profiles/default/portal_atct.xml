@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<atcttool
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <topic_indexes i18n:domain="collective.timelines">
+  <index name="timeline_date"
+     description="" enabled="True"
+     friendlyName="Timeline Date"
+     i18n:attributes="description; friendlyName">
+   <criteria>ATDateRangeCriterion</criteria>
+   <criteria>ATDateCriteria</criteria>
+  </index>
+ </topic_indexes>
+</atcttool>

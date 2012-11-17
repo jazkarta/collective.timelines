@@ -1,0 +1,57 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="collective.timelines">
+
+  <five:registerPackage package="." initialize=".initialize" />
+  <include package=".browser" />
+  <grok:grok package=".indexer" />
+  
+  <genericsetup:registerProfile
+      name="default"
+      title="collective.timelines"
+      directory="profiles/default"
+      description="Verite TimelineJS integration for folder views"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="collective.timelines uninstall"
+      directory="profiles/uninstall"
+      description="Uninstalls the collective.timelines package"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:importStep
+      name="remove-type-actions"
+      handler=".setuphandlers.revert_type_actions"
+      title="Remove type actions"
+      description="Removes actions from types">
+  </genericsetup:importStep>
+
+  <adapter factory=".at_content.TimelineExtender" />
+  <adapter factory=".at_content.TimelineContent" />
+  <adapter factory=".at_content.EventTimelineContent" />
+
+  <configure zcml:condition="installed plone.dexterity">
+    <grok:grok package=".dexterity_content" />
+    <plone:behavior
+        title="Timeline Configuration"
+        description="Set timeline specific metadata on content"
+        provides=".dexterity_content.ITimelineBehavior"
+        factory="plone.behavior.AnnotationStorage"
+        />
+  </configure>
+
+  <configure zcml:condition="installed Products.Maps">
+    <adapter factory=".map_support.MapTimlineUpdater"
+             for="Products.Maps.interfaces.ILocation"
+             />
+  </configure>
+
+</configure>
