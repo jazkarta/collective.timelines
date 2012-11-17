@@ -68,7 +68,7 @@ class TimelineContent(object):
         context = self.context
         field = context.getField('image')
         if field is not None:
-            image = (field.getScale(context, scale='mini') or
+            image = (field.getScale(context, scale='preview') or
                      field.getScale(context))
             if image:
                 return image.absolute_url()

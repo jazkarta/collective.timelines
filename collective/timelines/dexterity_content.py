@@ -57,7 +57,7 @@ class TimeLineContent(grok.Adapter):
             image_view = getMultiAdapter((context, request),
                                          name='images')
             try:
-                image = image_view.traverse('image', ['mini'])
+                image = image_view.traverse('image', ['preview'])
                 if image:
                     # This returns an image tag, pull the src attribute
                     return ET.fromstring(image).attrib['src']
