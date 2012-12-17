@@ -24,17 +24,27 @@ class TimelineExtender(object):
         ExtensionBooleanField('use_pub_date',
                               schemata='Timeline Config',
                               widget = BooleanWidget(
-                                    label=_(u'Use Publication Date')),
+                                    label=_(u'Use Publication Date(s)')),
                        ),
         ExtensionDateTimeField('timeline_date',
                                schemata='Timeline Config',
                                widget = CalendarWidget(
                                     label=_(u'Custom Timeline Date')),
                         ),
+        ExtensionDateTimeField('timeline_end',
+                               schemata='Timeline Config',
+                               widget = CalendarWidget(
+                                    label=_(u'Timeline End Date')),
+                        ),
         ExtensionBooleanField('bce_year',
                               schemata='Timeline Config',
                               widget = BooleanWidget(
                                     label=_(u'Year is BCE')),
+                       ),
+        ExtensionBooleanField('year_only',
+                              schemata='Timeline Config',
+                              widget = BooleanWidget(
+                                    label=_(u'Display year only on timeline')),
                        ),
         ]
 
@@ -64,6 +74,15 @@ class TimelineContent(object):
             return context.getEffectiveDate()
         return context.getField('timeline_date').get(context)
 
+    def end(self):
+        context = self.context
+        if not context.getField('timeline_end'):
+            # Schema not extended
+            return
+        if context.getField('use_pub_date').get(context):
+            return context.getExpirationDate()
+        return context.getField('timeline_end').get(context)
+
     def _get_image_url(self):
         context = self.context
         field = context.getField('image')
@@ -86,10 +105,18 @@ class TimelineContent(object):
             date = self.date()
             if not date:
                 return
-            data['startDate'] = format_datetime(date)
             bce_field = context.getField('bce_year')
-            if bce_field and bce_field.get(context):
+            bce = bce_field and bce_field.get(context)
+            year_only_field = context.getField('year_only')
+            year_only = year_only_field and year_only_field.get(context)
+            data['startDate'] = format_datetime(date, year_only)
+            if bce:
                 data['startDate'] = '-' + data['startDate']
+            end = self.end()
+            if end:
+                data['endDate'] = format_datetime(end, year_only)
+                if bce:
+                    data['endDate'] = '-' + data['endDate']
 
         subject = context.Subject()
         if subject:
@@ -129,6 +156,10 @@ class EventTimelineContent(TimelineContent):
     def date(self):
         context = self.context
         return context.getField('startDate').get(context)
+
+    def end(self):
+        context = self.context
+        return context.getField('endDate').get(context)
 
     def data(self, ignore_date=False):
         data = super(EventTimelineContent, self).data(ignore_date)

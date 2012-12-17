@@ -16,15 +16,20 @@ class ITimelineBehavior(form.Schema):
     form.fieldset(
             'timeline',
             label=_(u'Timeline Config'),
-            fields=('use_pub_date', 'timeline_date', 'bce_year'),
+            fields=('use_pub_date', 'timeline_date', 'timeline_end',
+                    'bce_year', 'year_only'),
             )
 
-    use_pub_date = Bool(title=_(u"Use Publication Date"))
+    use_pub_date = Bool(title=_(u"Use Publication Date(s)"))
 
     timeline_date = Datetime(title=_(u"Custom Timeline Date"),
                              required=False)
 
-    bce_year = Bool(title = _(u'Year is BCE'))
+    timeline_end = Datetime(title=_(u"Timeline End Date"),
+                             required=False)
+
+    bce_year = Bool(title = _(u'Year is BCE'), default=False)
+    year_only = Bool(title = _(u'Show Year Only'), default=False)
 
 
 alsoProvides(ITimelineBehavior, form.IFormFieldProvider)
@@ -49,6 +54,21 @@ class TimeLineContent(grok.Adapter):
         return date and DateTime(date.year, date.month, date.day,
                                  date.hour, date.minute)
 
+    def end(self):
+        date = None
+        context = self.context
+        adapter = ITimelineBehavior(context, None)
+        # Eventish items use the event start
+        if hasattr(context, 'end_date'):
+            date = context.end_date
+        elif adapter and adapter.use_pub_date:
+            # The DCFieldProperty is already a DateTime
+            return self.context.expiration_date
+        elif adapter:
+            date = adapter.timeline_end
+        return date and DateTime(date.year, date.month, date.day,
+                                 date.hour, date.minute)
+
     def _get_image_url(self):
         context = self.context
         # Look at the imaging view
@@ -67,6 +87,7 @@ class TimeLineContent(grok.Adapter):
     def data(self, ignore_date=False):
         context = self.context
         bce = ITimelineBehavior(context).bce_year
+        year_only = ITimelineBehavior(context).year_only
         data = {"headline": context.Title(),
                 "text": "<p>%s</p>"%context.Description(),}
 
@@ -74,14 +95,15 @@ class TimeLineContent(grok.Adapter):
             date = self.date()
             if not date:
                 return
-            data['startDate'] = format_datetime(date)
+            data['startDate'] = format_datetime(date, year_only)
             if bce:
                 data['startDate'] = '-' + data['startDate']
+            end = self.end()
+            if end:
+                data['endDate'] = format_datetime(end, year_only)
+                if bce:
+                    data['endDate'] = '-' + data['endDate']
 
-        # Use end date if available and not BCE
-        if not ignore_date and not bce and hasattr(context, 'end_date'):
-            end = context.end_date
-            data['endDate'] = '%s,%s,%s'%(end.year, end.month, end.day)
 
         subject = context.Subject()
         if subject:
