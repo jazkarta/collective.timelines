@@ -101,6 +101,13 @@ class TimelineContent(object):
         data = {"headline": context.Title(),
                 "text": "<p>%s</p>"%context.Description(),}
 
+        if ignore_date and context.getField('text'):
+            # Use text field instead of description on primary item
+            text = context.getField('text').get(context)
+            # Avoid weird auto-twitter logic
+            text = text.replace('/@@images/', '/images/')
+            data['text'] = text or data['text']
+
         if not ignore_date:
             date = self.date()
             if not date:
