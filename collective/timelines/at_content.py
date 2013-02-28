@@ -33,7 +33,9 @@ class ExtensionDateTimeField(ExtensionField, DateTimeField):
 
     def getRaw(self, instance, **kwargs):
         value = super(ExtensionDateTimeField, self).getRaw(instance, **kwargs)
-        return '%04d-%02d-%02d'%(value.year(),value.month(),value.day())
+        if isinstance(value, DateTime):
+            return '%04d-%02d-%02d'%(value.year(),value.month(),value.day())
+        return value
 
 class TimelineExtender(object):
     adapts(IBaseContent)
