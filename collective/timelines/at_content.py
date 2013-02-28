@@ -1,20 +1,39 @@
-from zope.component import adapts, getMultiAdapter
+import re
+from zope.component import adapts
 from zope.interface import implements
-from zope.traversing.interfaces import TraversalError
+from DateTime import DateTime
 from archetypes.schemaextender.field import ExtensionField
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from Products.Archetypes.atapi import (BooleanField, DateTimeField,
-                                       BooleanWidget, CalendarWidget,)
+                                       BooleanWidget, StringWidget,)
 from Products.Archetypes.interfaces import IBaseContent
 from Products.ATContentTypes.interfaces import IATEvent, IImageContent
 from collective.timelines.interfaces import ITimelineContent
 from collective.timelines import timelinesMessageFactory as _, format_datetime
 
+YEAR_ONLY = re.compile('^\d+$')
+
 class ExtensionBooleanField(ExtensionField, BooleanField):
     pass
 
 class ExtensionDateTimeField(ExtensionField, DateTimeField):
-    pass
+
+    def set(self, instance, value, **kwargs):
+        # Add some custom date parsing to ensure pre-year-1000 dates
+        # are handled well, and allow standalone years
+        if isinstance(value, basestring):
+            if '/' in value:
+                # convert / to -, to force better parsing
+                value.replace('/', '-')
+            elif YEAR_ONLY.match(value):
+                value = '%04d-01-01'%(int(value))
+            value = DateTime(value)
+        super(ExtensionDateTimeField, self).set(instance, value,
+                                                **kwargs)
+
+    def getRaw(self, instance, **kwargs):
+        value = super(ExtensionDateTimeField, self).getRaw(instance, **kwargs)
+        return '%04d-%02d-%02d'%(value.year(),value.month(),value.day())
 
 class TimelineExtender(object):
     adapts(IBaseContent)
@@ -28,13 +47,17 @@ class TimelineExtender(object):
                        ),
         ExtensionDateTimeField('timeline_date',
                                schemata='Timeline Config',
-                               widget = CalendarWidget(
-                                    label=_(u'Custom Timeline Date')),
+                               widget = StringWidget(
+                                    label=_(u'Custom Timeline Date'),
+                                    description=_(
+        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),)
                         ),
         ExtensionDateTimeField('timeline_end',
                                schemata='Timeline Config',
-                               widget = CalendarWidget(
-                                    label=_(u'Timeline End Date')),
+                               widget = StringWidget(
+                                    label=_(u'Timeline End Date'),
+                                    description=_(
+        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),)
                         ),
         ExtensionBooleanField('bce_year',
                               schemata='Timeline Config',
