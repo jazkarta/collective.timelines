@@ -7,9 +7,11 @@ from archetypes.schemaextender.interfaces import ISchemaExtender
 from Products.Archetypes.atapi import (BooleanField, DateTimeField,
                                        BooleanWidget, StringWidget,)
 from Products.Archetypes.interfaces import IBaseContent
-from Products.ATContentTypes.interfaces import IATEvent, IImageContent
+from Products.ATContentTypes.interfaces import IATEvent
 from collective.timelines.interfaces import ITimelineContent
-from collective.timelines import timelinesMessageFactory as _, format_datetime
+from collective.timelines import (timelinesMessageFactory as _,
+                                  format_datetime,
+                                  get_image_url,)
 
 YEAR_ONLY = re.compile('^\d+$')
 
@@ -108,19 +110,6 @@ class TimelineContent(object):
             return context.getExpirationDate()
         return context.getField('timeline_end').get(context)
 
-    def _get_image_url(self):
-        context = self.context
-        field = context.getField('image')
-        if field is not None:
-            image = (field.getScale(context, scale='preview') or
-                     field.getScale(context))
-            if image:
-                return image.absolute_url()
-        elif IImageContent.providedBy(context):
-            image = context.getImage()
-            if image:
-                return image.absolute_url()
-
     def data(self, ignore_date=False):
         context = self.context
         data = {"headline": context.Title(),
@@ -164,10 +153,10 @@ class TimelineContent(object):
             data['text'] = (data['text'] +
                     ' <a href="%s">more &hellip;</a>'%context.absolute_url())
 
-        image_url = self._get_image_url()
+        image_url = get_image_url(self.context)
         # Items with Images
         if image_url:
-            data['asset']['thumbnail'] = image_url
+            data['asset']['thumbnail'] = get_image_url(self.context, 'icon')
             if 'media' not in data['asset']:
                 data['asset']['media'] = image_url
 

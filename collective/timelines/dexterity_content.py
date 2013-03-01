@@ -1,14 +1,13 @@
-import xml.etree.ElementTree as ET
 from zope.interface import alsoProvides
-from zope.component import getMultiAdapter
 from zope.schema import Bool, Datetime
-from zope.traversing.interfaces import TraversalError
 from DateTime import DateTime
 from five import grok
 from plone.directives import form
 from plone.dexterity.interfaces import IDexterityContent
 from collective.timelines.interfaces import ITimelineContent
-from collective.timelines import timelinesMessageFactory as _, format_datetime
+from collective.timelines import (timelinesMessageFactory as _,
+                                  format_datetime,
+                                  get_image_url,)
 
 
 class ITimelineBehavior(form.Schema):
@@ -69,21 +68,6 @@ class TimeLineContent(grok.Adapter):
         return date and DateTime(date.year, date.month, date.day,
                                  date.hour, date.minute)
 
-    def _get_image_url(self):
-        context = self.context
-        # Look at the imaging view
-        request = getattr(context, 'REQUEST', None)
-        if request is not None:
-            image_view = getMultiAdapter((context, request),
-                                         name='images')
-            try:
-                image = image_view.traverse('image', ['preview'])
-                if image:
-                    # This returns an image tag, pull the src attribute
-                    return ET.fromstring(image).attrib['src']
-            except (AttributeError, TraversalError):
-                pass
-
     def data(self, ignore_date=False):
         context = self.context
         bce = ITimelineBehavior(context).bce_year
@@ -119,10 +103,10 @@ class TimeLineContent(grok.Adapter):
             data['text'] = (data['text'] +
                     ' <a href="%s">more &hellip;</a>'%context.absolute_url())
 
-        image_url = self._get_image_url()
+        image_url = get_image_url(self.context)
         # Items with Images
         if image_url:
-            data['asset']['thumbnail'] = image_url
+            data['asset']['thumbnail'] = get_image_url(self.context, 'icon')
             if 'media' not in data['asset']:
                 data['asset']['media'] = image_url
 
