@@ -32,10 +32,10 @@
         };
       </script>
       <script type="text/javascript"
-              tal:content="string:timeline_config.source = '${view/data_url}'; timeline_config.start_at_end = ${view/start_at_end}; timeline_config.font = '${view/font}'; timeline_config.maptype = '${view/map_style}'; timeline_config.lang = '${view/lang}'; timeline_config.css = '${view/resource_base}/css/timeline.css'; timeline_config.js = '${view/resource_base}/js/timeline-min.js'">
+              tal:content="string:timeline_config.source = '${view/data_url}'; timeline_config.start_at_end = ${view/start_at_end}; timeline_config.font = '${view/font}'; timeline_config.maptype = '${view/map_style}'; timeline_config.lang = '${view/lang}'; timeline_config.css = '${view/resource_base}/css/timeline.css?v=20120228-1'; timeline_config.js = '${view/resource_base}/js/timeline-min.js?v=20120228-1'">
       </script>
       <script type="text/javascript" src="storyjs-embed.js"
-              tal:attributes="src string:${view/resource_base}/js/storyjs-embed.js"></script>
+              tal:attributes="src string:${view/resource_base}/js/storyjs-embed.js?v=20120228-1"></script>
     </metal:main>
   </body>
 </html>
