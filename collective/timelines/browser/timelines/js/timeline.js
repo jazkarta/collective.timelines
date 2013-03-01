@@ -1253,13 +1253,22 @@ if(typeof VMM != 'undefined' && typeof VMM.Date == 'undefined') {
 			dateFormat.i18n.monthNames	=	lang.date.month_abbr.concat(lang.date.month);
 		},
 			
-		parse: function(d) {
+		parse: function(d, precision) {
 			"use strict";
 			var date,
 				date_array,
 				time_array,
-				time_parse;
-			
+				time_parse,
+				p = {
+					year: 			false,
+					month: 			false,
+					day: 			false,
+					hour: 			false,
+					minute: 		false,
+					second: 		false,
+					millisecond: 	false
+				};
+				
 			if (type.of(d) == "date") {
 				date = d;
 			} else {
@@ -1270,54 +1279,120 @@ if(typeof VMM != 'undefined' && typeof VMM.Date == 'undefined') {
 					for(var i = 0; i < date_array.length; i++) {
 						date_array[i] = parseInt(date_array[i], 10);
 					}
-					if (	date_array[0]			) {	date.setFullYear(		date_array[0]);			}
-					if (	date_array[1]	> 1		) {	date.setMonth(			date_array[1] - 1);		}
-					if (	date_array[2]	> 1		) {	date.setDate(			date_array[2]);			}
-					if (	date_array[3]	> 1		) {	date.setHours(			date_array[3]);			}
-					if (	date_array[4]	> 1		) {	date.setMinutes(		date_array[4]);			}
-					if (	date_array[5]	> 1		) {	date.setSeconds(		date_array[5]);			}
-					if (	date_array[6]	> 1		) {	date.setMilliseconds(	date_array[6]);			}
+					if (date_array[0]) {	
+						date.setFullYear(date_array[0]);
+						p.year = true;
+					}
+					if (date_array[1]) {
+						date.setMonth(date_array[1] - 1);
+						p.month = true;
+					}
+					if (date_array[2]) {
+						date.setDate(date_array[2]);
+						p.day = true;
+					}
+					if (date_array[3]) {
+						date.setHours(date_array[3]);
+						p.hour = true;
+					}
+					if (date_array[4]) {
+						date.setMinutes(date_array[4]);
+						p.minute = true;
+					}
+					if (date_array[5]) {
+						date.setSeconds(date_array[5]);
+						p.second = true;
+					}
+					if (date_array[6]) {
+						date.setMilliseconds(date_array[6]);
+						p.millisecond = true;
+					}
 				} else if (d.match("/")) {
 					if (d.match(" ")) {
+						
 						time_parse = d.split(" ");
 						if (d.match(":")) {
 							time_array = time_parse[1].split(":");
-							if (	time_array[0]	>= 1	) {		date.setHours(			time_array[0]);	}
-							if (	time_array[1]	>= 1	) {		date.setMinutes(		time_array[1]);	}
-							if (	time_array[2]	>= 1	) {		date.setSeconds(		time_array[2]);	}
-							if (	time_array[3]	>= 1	) {		date.setMilliseconds(	time_array[3]);	}
+							if (time_array[0] >= 0 ) {
+								date.setHours(time_array[0]);
+								p.hour = true;
+							}
+							if (time_array[1] >= 0) {
+								date.setMinutes(time_array[1]);
+								p.minute = true;
+							}
+							if (time_array[2] >= 0) {
+								date.setSeconds(time_array[2]);
+								p.second = true;
+							}
+							if (time_array[3] >= 0) {
+								date.setMilliseconds(time_array[3]);
+								p.millisecond = true;
+							}
 						}
 						date_array = time_parse[0].split("/");
 					} else {
 						date_array = d.split("/");
 					}
-					if (	date_array[2]			) {	date.setFullYear(		date_array[2]);			}
-					if (	date_array[0]	> 1		) {	date.setMonth(			date_array[0] - 1);		}
-					if (	date_array[1]	> 1		) {	date.setDate(			date_array[1]);			}
+					if (date_array[2]) {
+						date.setFullYear(date_array[2]);
+						p.year = true;
+					}
+					if (date_array[0] >= 0) {
+						date.setMonth(date_array[0] - 1);
+						p.month = true;
+					}
+					if (date_array[1] >= 0) {
+						if (date_array[1].length > 2) {
+							date.setFullYear(date_array[1]);
+							p.year = true;
+						} else {
+							date.setDate(date_array[1]);
+							p.day = true;
+						}
+					}
 				} else if (d.match("now")) {
-					var now = new Date();					
+					var now = new Date();	
+									
 					date.setFullYear(now.getFullYear());
+					p.year = true;
+					
 					date.setMonth(now.getMonth());
+					p.month = true;
+					
 					date.setDate(now.getDate());
+					p.day = true;
+					
 					if (d.match("hours")) {
 						date.setHours(now.getHours());
+						p.hour = true;
 					}
 					if (d.match("minutes")) {
 						date.setHours(now.getHours());
 						date.setMinutes(now.getMinutes());
+						p.hour = true;
+						p.minute = true;
 					}
 					if (d.match("seconds")) {
 						date.setHours(now.getHours());
 						date.setMinutes(now.getMinutes());
 						date.setSeconds(now.getSeconds());
+						p.hour = true;
+						p.minute = true;
+						p.second = true;
 					}
 					if (d.match("milliseconds")) {
 						date.setHours(now.getHours());
 						date.setMinutes(now.getMinutes());
 						date.setSeconds(now.getSeconds());
 						date.setMilliseconds(now.getMilliseconds());
+						p.hour = true;
+						p.minute = true;
+						p.second = true;
+						p.millisecond = true;
 					}
 				} else if (d.length <= 5) {
+					p.year = true;
 					date.setFullYear(parseInt(d, 10));
 					date.setMonth(0);
 					date.setDate(1);
@@ -1331,20 +1406,48 @@ if(typeof VMM != 'undefined' && typeof VMM.Date == 'undefined') {
 						time_parse = d.split("T");
 						if (d.match(":")) {
 							time_array = _time_parse[1].split(":");
-							if (	time_array[0]	>= 1	) {		date.setHours(			time_array[0]);	}
-							if (	time_array[1]	>= 1	) {		date.setMinutes(		time_array[1]);	}
-							if (	time_array[2]	>= 1	) {		date.setSeconds(		time_array[2]);	}
-							if (	time_array[3]	>= 1	) {		date.setMilliseconds(	time_array[3]);	}
+							if (time_array[0] >= 1) {
+								date.setHours(time_array[0]);
+								p.hour = true;
+							}
+							if (time_array[1] >= 1) {
+								date.setMinutes(time_array[1]);
+								p.minute = true;
+							}
+							if (time_array[2] >= 1) {
+								date.setSeconds(time_array[2]);
+								p.second = true;
+							}
+							if (time_array[3] >= 1) {
+								date.setMilliseconds(time_array[3]);
+								p.millisecond = true;
+							}
 						}
 						_d_array = time_parse[0].split("-");
-						if (	date_array[0]			) {	date.setFullYear(		date_array[0]);			}
-						if (	date_array[1]	> 1		) {	date.setMonth(			date_array[1] - 1);		}
-						if (	date_array[2]	> 1		) {	date.setDate(			date_array[2]);			}
+						if (date_array[0]) {
+							date.setFullYear(date_array[0]);
+							p.year = true;
+						}
+						if (date_array[1] >= 0) {
+							date.setMonth(date_array[1] - 1);
+							p.month = true;
+						}
+						if (date_array[2] >= 0) {
+							date.setDate(date_array[2]);
+							p.day = true;
+						}
 						
 					} else {
 						date = new Date(Date.parse(d));
 					}
 				} else {
+					p.year = true;
+					p.month = true;
+					p.day = true;
+					p.hour = true;
+					p.minute = true;
+					p.second = true;
+					p.millisecond = true;
 					date = new Date(
 						parseInt(d.slice(0,4), 10), 
 						parseInt(d.slice(4,6), 10) - 1, 
@@ -1355,10 +1458,20 @@ if(typeof VMM != 'undefined' && typeof VMM.Date == 'undefined') {
 				}
 				
 			}
-			return date;
-		},
 			
-		prettyDate: function(d, is_abbr, d2) {
+			if (precision != null && precision != "") {
+				return {
+					date: 		date,
+					precision: 	p
+				};
+			} else {
+				return date;
+			}
+		},
+		
+		
+			
+		prettyDate: function(d, is_abbr, p, d2) {
 			var _date,
 				_date2,
 				format,
@@ -1368,70 +1481,111 @@ if(typeof VMM != 'undefined' && typeof VMM.Date == 'undefined') {
 				bc_number,
 				bc_string;
 				
-			if (d2 != null) {
+			if (d2 != null && d2 != "" && typeof d2 != 'undefined') {
 				is_pair = true;
+				trace("D2 " + d2);
 			}
 			
 			
 			if (type.of(d) == "date") {
-				if (d.getMonth() === 0 && d.getDate() == 1 && d.getHours() === 0 && d.getMinutes() === 0 ) {
-					// YEAR ONLY
-					format = VMM.Date.dateformats.year;
-				} else if (d.getDate() <= 1 && d.getHours() === 0 && d.getMinutes() === 0) {
-					// YEAR MONTH
-					if (is_abbr) {
-						format = VMM.Date.dateformats.month_short;
+				
+				if (type.of(p) == "object") {
+					if (p.millisecond || p.second || p.minute) {
+						// YEAR MONTH DAY HOUR MINUTE
+						if (is_abbr){
+							format = VMM.Date.dateformats.time_no_seconds_short; 
+						} else {
+							format = VMM.Date.dateformats.time_no_seconds_small_date;
+						}
+					} else if (p.hour) {
+						// YEAR MONTH DAY HOUR
+						if (is_abbr) {
+							format = VMM.Date.dateformats.time_no_seconds_short;
+						} else {
+							format = VMM.Date.dateformats.time_no_seconds_small_date;
+						}
+					} else if (p.day) {
+						// YEAR MONTH DAY
+						if (is_abbr) {
+							format = VMM.Date.dateformats.full_short;
+						} else {
+							format = VMM.Date.dateformats.full;
+						}
+					} else if (p.month) {
+						// YEAR MONTH
+						if (is_abbr) {
+							format = VMM.Date.dateformats.month_short;
+						} else {
+							format = VMM.Date.dateformats.month;
+						}
+					} else if (p.year) {
+						format = VMM.Date.dateformats.year;
 					} else {
-						format = VMM.Date.dateformats.month;
+						format = VMM.Date.dateformats.year;
 					}
-				} else if (d.getHours() === 0 && d.getMinutes() === 0) {
-					// YEAR MONTH DAY
-					if (is_abbr) {
-						format = VMM.Date.dateformats.full_short;
-					} else {
-						format = VMM.Date.dateformats.full;
-					}
-				} else  if (d.getMinutes() === 0) {
-					// YEAR MONTH DAY HOUR
-					if (is_abbr) {
-						format = VMM.Date.dateformats.time_no_seconds_short;
-					} else {
-						format = VMM.Date.dateformats.time_no_seconds_small_date;
-					}
+					
 				} else {
-					// YEAR MONTH DAY HOUR MINUTE
-					if (is_abbr){
-						format = VMM.Date.dateformats.time_no_seconds_short; 
+					
+					if (d.getMonth() === 0 && d.getDate() == 1 && d.getHours() === 0 && d.getMinutes() === 0 ) {
+						// YEAR ONLY
+						format = VMM.Date.dateformats.year;
+					} else if (d.getDate() <= 1 && d.getHours() === 0 && d.getMinutes() === 0) {
+						// YEAR MONTH
+						if (is_abbr) {
+							format = VMM.Date.dateformats.month_short;
+						} else {
+							format = VMM.Date.dateformats.month;
+						}
+					} else if (d.getHours() === 0 && d.getMinutes() === 0) {
+						// YEAR MONTH DAY
+						if (is_abbr) {
+							format = VMM.Date.dateformats.full_short;
+						} else {
+							format = VMM.Date.dateformats.full;
+						}
+					} else  if (d.getMinutes() === 0) {
+						// YEAR MONTH DAY HOUR
+						if (is_abbr) {
+							format = VMM.Date.dateformats.time_no_seconds_short;
+						} else {
+							format = VMM.Date.dateformats.time_no_seconds_small_date;
+						}
 					} else {
-						format = VMM.Date.dateformats.full_long; 
+						// YEAR MONTH DAY HOUR MINUTE
+						if (is_abbr){
+							format = VMM.Date.dateformats.time_no_seconds_short; 
+						} else {
+							format = VMM.Date.dateformats.full_long; 
+						}
 					}
 				}
 				
 				_date = dateFormat(d, format, false);
+				//_date = "Jan"
 				bc_check = _date.split(" ");
 					
 				// BC TIME SUPPORT
 				for(var i = 0; i < bc_check.length; i++) {
 					if ( parseInt(bc_check[i], 10) < 0 ) {
-						trace("YEAR IS BCE");
+						trace("YEAR IS BC");
 						bc_original	= bc_check[i];
 						bc_number	= Math.abs( parseInt(bc_check[i], 10) );
-						bc_string	= bc_number.toString() + " BCE";
+						bc_string	= bc_number.toString() + " B.C.";
 						_date		= _date.replace(bc_original, bc_string);
 					}
 				}
 					
 					
 				if (is_pair) {
-					_date2 = dateFormat(d2, format);
+					_date2 = dateFormat(d2, format, false);
 					bc_check = _date2.split(" ");
 					// BC TIME SUPPORT
 					for(var j = 0; j < bc_check.length; j++) {
 						if ( parseInt(bc_check[j], 10) < 0 ) {
-							trace("YEAR IS BCE");
+							trace("YEAR IS BC");
 							bc_original	= bc_check[j];
 							bc_number	= Math.abs( parseInt(bc_check[j], 10) );
-							bc_string	= bc_number.toString() + " BCE";
+							bc_string	= bc_number.toString() + " B.C.";
 							_date2			= _date2.replace(bc_original, bc_string);
 						}
 					}
@@ -4479,8 +4633,6 @@ if(typeof VMM != 'undefined' && typeof VMM.TextElement == 'undefined') {
 /* DRAG SLIDER
 ================================================== */
 if(typeof VMM != 'undefined' && typeof VMM.DragSlider == 'undefined') {
-	// VMM.DragSlider.createSlidePanel(drag_object, move_object, w, padding, sticky);
-	// VMM.DragSlider.cancelSlide();
 
 	VMM.DragSlider = function() {
 		var drag = {
@@ -4614,11 +4766,6 @@ if(typeof VMM != 'undefined' && typeof VMM.DragSlider == 'undefined') {
 		function onDragMove(e) {
 			dragMove(e.data.element, e);
 			
-			if (Math.abs(drag.left.start) > getLeft(elem)) {
-				
-
-			}
-			
 			return false;
 		}
 		
@@ -4659,8 +4806,6 @@ if(typeof VMM != 'undefined' && typeof VMM.DragSlider == 'undefined') {
 				e.preventDefault();
 				e.stopPropagation();
 			}
-			//VMM.Lib.css(elem, 'left', drag_to);
-
 		}
 		
 		function dragMomentum(elem, e) {
@@ -4705,23 +4850,12 @@ if(typeof VMM != 'undefined' && typeof VMM.DragSlider == 'undefined') {
 			if (!is_sticky) {
 				if (drag_info.time > 0) {
 					if (drag.touch) {
-						//VMM.Lib.css(elem, '-webkit-transition-property', 'left');
-						//VMM.Lib.css(elem, '-webkit-transition-duration', drag_info.time);
-						//VMM.Lib.css(elem, 'left', drag_info.left);
-					
-						//VMM.Lib.animate(elem, drag_info.time, "easeOutQuad", {"left": drag_info.left});
 						VMM.Lib.animate(elem, drag_info.time, "easeOutCirc", {"left": drag_info.left});
-						//VMM.Lib.css(elem, 'webkitTransition', '');
-						//VMM.Lib.css(elem, 'webkitTransition', '-webkit-transform ' + drag_info.time + 'ms cubic-bezier(0.33, 0.66, 0.66, 1)');
-						//VMM.Lib.css(elem, 'webkitTransform', 'translate3d(' + drag_info.left + 'px, 0, 0)');
-
 					} else {
 						VMM.Lib.animate(elem, drag_info.time, drag.ease, {"left": drag_info.left});
 					}
 				}
 			}
-			
-			
 		}
 		
 		function getLeft(elem) {
@@ -5306,7 +5440,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 		
 		/* POSITION SLIDES
 		================================================== */
-		var positionSlides = function() {
+		function positionSlides() {
 			var pos = 0,
 				i	= 0;
 				
@@ -5318,7 +5452,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 		
 		/* OPACITY SLIDES
 		================================================== */
-		var opacitySlides = function(n) {
+		function opacitySlides(n) {
 			var _ease	= "linear",
 				i		= 0;
 				
@@ -5377,7 +5511,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 							VMM.attachElement(navigation.prevDate, _title);
 							VMM.attachElement(navigation.prevTitle, "");
 						} else {
-							VMM.attachElement(navigation.prevDate, VMM.Date.prettyDate(data[current_slide - 1].startdate));
+							VMM.attachElement(navigation.prevDate, VMM.Date.prettyDate(data[current_slide - 1].startdate, false, data[current_slide - 1].precisiondate));
 							VMM.attachElement(navigation.prevTitle, _title);
 						}
 					} else {
@@ -5395,7 +5529,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 							VMM.attachElement(navigation.nextDate, _title);
 							VMM.attachElement(navigation.nextTitle, "");
 						} else {
-							VMM.attachElement(navigation.nextDate, VMM.Date.prettyDate(data[current_slide + 1].startdate) );
+							VMM.attachElement(navigation.nextDate, VMM.Date.prettyDate(data[current_slide + 1].startdate, false, data[current_slide + 1].precisiondate) );
 							VMM.attachElement(navigation.nextTitle, _title);
 						}
 					} else {
@@ -5730,8 +5864,8 @@ if (typeof VMM.Slider != 'undefined') {
 			if (data.startdate != null && data.startdate != "") {
 				if (type.of(data.startdate) == "date") {
 					if (data.type != "start") {
-						var st	= VMM.Date.prettyDate(data.startdate);
-						var en	= VMM.Date.prettyDate(data.enddate);
+						var st	= VMM.Date.prettyDate(data.startdate, false, data.precisiondate);
+						var en	= VMM.Date.prettyDate(data.enddate, false, data.precisiondate);
 						var tag	= "";
 						/* TAG / CATEGORY
 						================================================== */
@@ -7199,25 +7333,19 @@ if(typeof VMM != 'undefined' && typeof VMM.Timeline == 'undefined') {
 				
 				if (data.date[i].startDate != null && data.date[i].startDate != "") {
 					
-					var _date = {};
-					
-					// START DATE
-					if (data.date[i].type == "tweets") {
-						_date.startdate = VMM.ExternalAPI.twitter.parseTwitterDate(data.date[i].startDate);
-					} else {
-						_date.startdate = VMM.Date.parse(data.date[i].startDate);
-					}
+					var _date		= {},
+						do_start	= VMM.Date.parse(data.date[i].startDate, true),
+						do_end;
+						
+					_date.startdate		= do_start.date;
+					_date.precisiondate	= do_start.precision;
 					
 					if (!isNaN(_date.startdate)) {
 						
 					
 						// END DATE
 						if (data.date[i].endDate != null && data.date[i].endDate != "") {
-							if (data.date[i].type == "tweets") {
-								_date.enddate = VMM.ExternalAPI.twitter.parseTwitterDate(data.date[i].endDate);
-							} else {
-								_date.enddate = VMM.Date.parse(data.date[i].endDate);
-							}
+							_date.enddate = VMM.Date.parse(data.date[i].endDate);
 						} else {
 							_date.enddate = _date.startdate;
 						}
@@ -7229,11 +7357,11 @@ if(typeof VMM != 'undefined' && typeof VMM.Timeline == 'undefined') {
 								_date.needs_slug = true;
 							}
 						}
-					
+						
 						_date.title				= data.date[i].headline;
 						_date.headline			= data.date[i].headline;
 						_date.type				= data.date[i].type;
-						_date.date				= VMM.Date.prettyDate(_date.startdate);
+						_date.date				= VMM.Date.prettyDate(_date.startdate, false, _date.precisiondate);
 						_date.asset				= data.date[i].asset;
 						_date.fulldate			= _date.startdate.getTime();
 						_date.text				= data.date[i].text;
@@ -7262,12 +7390,14 @@ if(typeof VMM != 'undefined' && typeof VMM.Timeline == 'undefined') {
 			if (data.headline != null && data.headline != "" && data.text != null && data.text != "") {
 
 				var startpage_date,
+					do_start,
 					_date			= {},
 					td_num			= 0,
 					td;
 					
 				if (typeof data.startDate != 'undefined') {
-					startpage_date	= VMM.Date.parse(data.startDate);
+					do_start		= VMM.Date.parse(data.startDate, true);
+					startpage_date	= do_start.date;
 				} else {
 					startpage_date = false;
 				}
@@ -7300,11 +7430,12 @@ if(typeof VMM != 'undefined' && typeof VMM.Timeline == 'undefined') {
 				
 				_date.uniqueid		= VMM.Util.unique_ID(7);
 				_date.enddate		= _date.startdate;
+				_date.precisiondate	= do_start.precision;
 				_date.title			= data.headline;
 				_date.headline		= data.headline;
 				_date.text			= data.text;
 				_date.type			= "start";
-				_date.date			= VMM.Date.prettyDate(data.startDate);
+				_date.date			= VMM.Date.prettyDate(data.startDate, false, _date.precisiondate);
 				_date.asset			= data.asset;
 				_date.slug			= false;
 				_date.needs_slug	= false;
@@ -7634,7 +7765,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			VMM.Lib.css($timenav, "left", scroll_to);	
 		}
 		
-		var refreshTimeline = function() {
+		function refreshTimeline() {
 			trace("config.nav.multiplier " + config.nav.multiplier.current);
 			positionMarkers(true);
 			positionEras(true);
@@ -7657,7 +7788,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			VMM.Lib.toggleClass(e.data.elem, "zFront");
 		};
 		
-		var goToMarker = function(n, ease, duration, fast, firstrun) {
+		function goToMarker(n, ease, duration, fast, firstrun) {
 			trace("GO TO MARKER");
 			var _ease		= config.ease,
 				_duration	= config.duration,
@@ -7705,7 +7836,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 		
 		/* CALCULATIONS
 		================================================== */
-		var averageMarkerPositionDistance = function() {
+		function averageMarkerPositionDistance() {
 			var last_pos	= 0,
 				pos			= 0,
 				pos_dif		= 0,
@@ -7726,7 +7857,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			return VMM.Util.average(mp_diff).mean;
 		}
 		
-		var averageDateDistance = function() {
+		function averageDateDistance() {
 			var last_dd			= 0,
 				dd				= 0,
 				_dd				= "",
@@ -7750,7 +7881,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			return VMM.Util.average(date_diffs);
 		}
 		
-		var calculateMultiplier = function() {
+		function calculateMultiplier() {
 			var temp_multiplier	= config.nav.multiplier.current,
 				i				= 0;
 				
@@ -7764,7 +7895,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			
 		}
 		
-		var calculateInterval = function() {
+		function calculateInterval() {
 			// NEED TO REWRITE ALL OF THIS
 			var _first								= getDateFractions(data[0].startdate),
 				_last								= getDateFractions(data[data.length - 1].enddate);
@@ -7897,7 +8028,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			interval_calc.second.minor 				= 10;
 		}
 		
-		var getDateFractions = function(the_date, is_utc) {
+		function getDateFractions(the_date, is_utc) {
 			
 			var _time = {};
 			_time.days			=		the_date		/	dateFractionBrowser.day;
@@ -7936,7 +8067,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			Positions elements on the timeline based on date
 			relative to the calculated interval
 		================================================== */
-		var positionRelative = function(_interval, first, last) {
+		function positionRelative(_interval, first, last) {
 			var _first,
 				_last,
 				_type			= _interval.type,
@@ -8023,14 +8154,14 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			return timerelative
 		}
 		
-		var positionOnTimeline = function(the_interval, timerelative) {
+		function positionOnTimeline(the_interval, timerelative) {
 			return {
 				begin:	(timerelative.start	-	interval.base) * (config.nav.interval_width / config.nav.multiplier.current), 
 				end:	(timerelative.end	-	interval.base) * (config.nav.interval_width / config.nav.multiplier.current)
 			};
 		}
 		
-		var positionMarkers = function(is_animated) {
+		function positionMarkers(is_animated) {
 			
 			var row						= 2,
 				previous_pos			= 0,
@@ -8191,7 +8322,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 		
 		}
 		
-		var positionEras = function(is_animated) {
+		function positionEras(is_animated) {
 			var i	= 0,
 				p	= 0;
 				
@@ -8238,7 +8369,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			}
 		}
 		
-		var positionInterval = function(the_main_element, the_intervals, is_animated, is_minor) {
+		function positionInterval(the_main_element, the_intervals, is_animated, is_minor) {
 			
 			var last_position		= 0,
 				last_position_major	= 0,
@@ -8373,7 +8504,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 		
 		/* Interval Elements
 		================================================== */
-		var createIntervalElements = function(_interval, _array, _element_parent) {
+		function createIntervalElements(_interval, _array, _element_parent) {
 			
 			var inc_time			= 0,
 				_first_run			= true,
@@ -8539,7 +8670,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 				
 				if (_is_year) {
 					if ( int_obj.date.getFullYear() < 0 ) {
-						int_obj.date_string = 	Math.abs( int_obj.date.getFullYear() ).toString() + " BCE";
+						int_obj.date_string = 	Math.abs( int_obj.date.getFullYear() ).toString() + " B.C.";
 					} else {
 						int_obj.date_string = int_obj.date.getFullYear();
 					}
@@ -8579,7 +8710,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 		
 		/* BUILD
 		================================================== */
-		var build = function() {
+		function build() {
 			var i	= 0,
 				j	= 0;
 				
@@ -8674,7 +8805,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			
 		};
 		
-		var buildInterval = function() {
+		function buildInterval() {
 			var i	= 0,
 				j	= 0;
 			// CALCULATE INTERVAL
@@ -8763,7 +8894,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			}
 		}
 		
-		var buildMarkers = function() {
+		function buildMarkers() {
 			
 			var row			= 2,
 				lpos		= 0,
@@ -8908,7 +9039,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 			
 		}
 		
-		var buildEras = function() {
+		function buildEras() {
 			var number_of_colors	= 6,
 				current_color		= 0,
 				j					= 0;
