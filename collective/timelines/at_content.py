@@ -21,7 +21,7 @@ class ExtensionDateTimeField(ExtensionField, DateTimeField):
     def set(self, instance, value, **kwargs):
         # Add some custom date parsing to ensure pre-year-1000 dates
         # are handled well, and allow standalone years
-        if isinstance(value, basestring):
+        if value and isinstance(value, basestring):
             if '/' in value:
                 # convert / to -, to force better parsing
                 value.replace('/', '-')
