@@ -16,7 +16,7 @@ class ITimelineBehavior(form.Schema):
             'timeline',
             label=_(u'Timeline Config'),
             fields=('use_pub_date', 'timeline_date', 'timeline_end',
-                    'bce_year', 'year_only'),
+                    'bce_year', 'year_only', 'show_tag'),
             )
 
     use_pub_date = Bool(title=_(u"Use Publication Date(s)"))
@@ -29,6 +29,8 @@ class ITimelineBehavior(form.Schema):
 
     bce_year = Bool(title = _(u'Year is BCE'), default=False)
     year_only = Bool(title = _(u'Show Year Only'), default=False)
+    show_tag = Bool(title = _(u'Show first tag in timeline'),
+                     default=False)
 
 
 alsoProvides(ITimelineBehavior, form.IFormFieldProvider)
@@ -70,8 +72,9 @@ class TimeLineContent(grok.Adapter):
 
     def data(self, ignore_date=False):
         context = self.context
-        bce = ITimelineBehavior(context).bce_year
-        year_only = ITimelineBehavior(context).year_only
+        adapter = ITimelineBehavior(context)
+        bce = adapter.bce_year
+        year_only = adapter.year_only
         data = {"headline": context.Title(),
                 "text": "<p>%s</p>"%context.Description(),}
 
@@ -90,7 +93,7 @@ class TimeLineContent(grok.Adapter):
 
 
         subject = context.Subject()
-        if subject:
+        if subject and adapter.show_tag:
             # Take the first keyword, somewhat arbitrarily
             data['tag'] = subject[0]
 

@@ -73,6 +73,12 @@ class TimelineExtender(object):
                               widget = BooleanWidget(
                                     label=_(u'Display year only on timeline')),
                        ),
+        ExtensionBooleanField('show_tag',
+                              schemata='Timeline Config',
+                              default=False,
+                              widget = BooleanWidget(
+                                label=_(u'Show first tag in timeline')),
+                       ),
         ]
 
     def __init__(self, context):
@@ -140,7 +146,7 @@ class TimelineContent(object):
                     data['endDate'] = '-' + data['endDate']
 
         subject = context.Subject()
-        if subject:
+        if subject and context.getField('show_tag').get(context):
             # Take the first keyword, somewhat arbitrarily
             data['tag'] = subject[0]
 
