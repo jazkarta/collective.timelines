@@ -2,6 +2,7 @@ from zope.interface import alsoProvides
 from zope.schema import Bool, Datetime
 from DateTime import DateTime
 from five import grok
+from z3c.form.interfaces import IEditForm, IAddForm
 from plone.directives import form
 from plone.dexterity.interfaces import IDexterityContent
 from collective.timelines.interfaces import ITimelineContent
@@ -9,14 +10,15 @@ from collective.timelines import (timelinesMessageFactory as _,
                                   format_datetime,
                                   get_image_url,)
 
+timeline_fields = ('use_pub_date', 'timeline_date', 'timeline_end',
+                    'bce_year', 'year_only', 'show_tag')
 
 class ITimelineBehavior(form.Schema):
     """Add timeline configuration to content"""
     form.fieldset(
             'timeline',
             label=_(u'Timeline Config'),
-            fields=('use_pub_date', 'timeline_date', 'timeline_end',
-                    'bce_year', 'year_only', 'show_tag'),
+            fields=timeline_fields,
             )
 
     use_pub_date = Bool(title=_(u"Use Publication Date(s)"))
@@ -31,6 +33,9 @@ class ITimelineBehavior(form.Schema):
     year_only = Bool(title = _(u'Show Year Only'), default=False)
     show_tag = Bool(title = _(u'Show first tag in timeline'),
                      default=False)
+    form.omitted(*timeline_fields)
+    form.no_omit(IEditForm, *timeline_fields)
+    form.no_omit(IAddForm, *timeline_fields)
 
 
 alsoProvides(ITimelineBehavior, form.IFormFieldProvider)

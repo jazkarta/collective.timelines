@@ -47,37 +47,43 @@ class TimelineExtender(object):
         ExtensionBooleanField('use_pub_date',
                               schemata='Timeline Config',
                               widget = BooleanWidget(
-                                    label=_(u'Use Publication Date(s)')),
+                                    label=_(u'Use Publication Date(s)'),
+                                    visible= {'view': 'invisible'},),
                        ),
         ExtensionDateTimeField('timeline_date',
                                schemata='Timeline Config',
                                widget = StringWidget(
                                     label=_(u'Custom Timeline Date'),
                                     description=_(
-        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),)
+        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),
+                                    visible= {'view': 'invisible'},)
                         ),
         ExtensionDateTimeField('timeline_end',
                                schemata='Timeline Config',
                                widget = StringWidget(
                                     label=_(u'Timeline End Date'),
                                     description=_(
-        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),)
+        u'Must be entered as "YYYY-MM-DD" or a standalone year (e.g. "0525-02-23" or "25" for year 25)'),
+                                    visible= {'view': 'invisible'},)
                         ),
         ExtensionBooleanField('bce_year',
                               schemata='Timeline Config',
                               widget = BooleanWidget(
-                                    label=_(u'Year is BCE')),
+                                    label=_(u'Year is BCE'),
+                                    visible= {'view': 'invisible'},),
                        ),
         ExtensionBooleanField('year_only',
                               schemata='Timeline Config',
                               widget = BooleanWidget(
-                                    label=_(u'Display year only on timeline')),
+                                    label=_(u'Display year only on timeline'),
+                                    visible= {'view': 'invisible'},),
                        ),
         ExtensionBooleanField('show_tag',
                               schemata='Timeline Config',
                               default=False,
                               widget = BooleanWidget(
-                                label=_(u'Show first tag in timeline')),
+                                label=_(u'Show first tag in timeline'),
+                                visible= {'view': 'invisible'},),
                        ),
         ]
 
