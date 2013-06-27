@@ -4,6 +4,7 @@ from DateTime import DateTime
 from five import grok
 from z3c.form.interfaces import IEditForm, IAddForm
 from plone.directives import form
+from plone.supermodel.model import Schema
 from plone.dexterity.interfaces import IDexterityContent
 from collective.timelines.interfaces import ITimelineContent
 from collective.timelines import (timelinesMessageFactory as _,
@@ -13,7 +14,7 @@ from collective.timelines import (timelinesMessageFactory as _,
 timeline_fields = ('use_pub_date', 'timeline_date', 'timeline_end',
                     'bce_year', 'year_only', 'show_tag')
 
-class ITimelineBehavior(form.Schema):
+class ITimelineBehavior(Schema):
     """Add timeline configuration to content"""
     form.fieldset(
             'timeline',

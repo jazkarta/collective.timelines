@@ -1,15 +1,15 @@
 from zope import interface, schema
 from five import grok
 from z3c.form.interfaces import HIDDEN_MODE
-from z3c.form import button
 from plone.directives import form
+from plone.supermodel.model import Schema
 from plone.behavior import AnnotationStorage
 from Products.CMFCore.utils import getToolByName
 from collective.timelines.config import FONT_VOCAB, MAP_VOCAB
 from collective.timelines import timelinesMessageFactory as _
 
 
-class ITimelineSettings(form.Schema):
+class ITimelineSettings(Schema):
     """Form schema for timeline settings"""
 
     start_at_end = schema.Bool(
