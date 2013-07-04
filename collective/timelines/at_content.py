@@ -8,6 +8,7 @@ from Products.Archetypes.atapi import (BooleanField, DateTimeField,
                                        BooleanWidget, StringWidget,)
 from Products.Archetypes.interfaces import IBaseContent
 from Products.ATContentTypes.interfaces import IATEvent
+from Products.CMFCore.utils import getToolByName
 from collective.timelines.interfaces import ITimelineContent
 from collective.timelines import (timelinesMessageFactory as _,
                                   format_datetime,
@@ -162,8 +163,14 @@ class TimelineContent(object):
             data['asset']['media'] = context.getField('remoteUrl').get(context)
         elif not ignore_date:
             # Include a url to the content
+            url = context.absolute_url()
+            site_properties = getToolByName(context,
+                                            'portal_properties').site_properties
+            if (context.portal_type in
+                site_properties.typesUseViewActionInListings):
+                url = url + '/view'
             data['text'] = (data['text'] +
-                    ' <a href="%s">more &hellip;</a>'%context.absolute_url())
+                    ' <a href="%s">more &hellip;</a>'%url)
 
         image_url = get_image_url(self.context)
         # Items with Images
