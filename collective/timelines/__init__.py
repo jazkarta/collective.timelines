@@ -23,21 +23,25 @@ def get_image_url(context, size='large'):
     if request is not None:
         image_view = getMultiAdapter((context, request),
                                      name='images')
-        try:
-            scale_attr = size and [size] or []
-            image = image_view.traverse('image', scale_attr)
-            if image:
-                # This returns an image tag, pull the src attribute
-                return ET.fromstring(image).attrib['src']
-        except (AttributeError, TraversalError):
-            if IImageContent.providedBy(context):
-                image = context.getImage()
+        # compatibility with collective.contentleadimage
+        image_url = None
+        for image_name in ['image', 'leadImage']:
+            try:
+                scale_attr = size and [size] or []
+                image = image_view.traverse(image_name, scale_attr)
                 if image:
-                    return image.absolute_url()
-            if hasattr(context, 'getField'):
-                field = context.getField('image')
-                handler = IImageScaleHandler(field, None)
-                if handler is not None:
-                    image = handler.getScale(context, size)
+                    # This returns an image tag, pull the src attribute
+                    image_url = ET.fromstring(image).attrib['src']
+            except (AttributeError, TraversalError):
+                if IImageContent.providedBy(context):
+                    image = context.getImage()
                     if image:
-                        return image.absolute_url()
+                        image_url = image.absolute_url()
+                if hasattr(context, 'getField'):
+                    field = context.getField('image')
+                    handler = IImageScaleHandler(field, None)
+                    if handler is not None:
+                        image = handler.getScale(context, size)
+                        if image:
+                           image_url = image.absolute_url()
+        return image_url
