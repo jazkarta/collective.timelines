@@ -15,7 +15,7 @@ from collective.timelines import (timelinesMessageFactory as _,
 timeline_fields = ('use_pub_date', 'timeline_date', 'timeline_end',
                     'bce_year', 'year_only', 'show_tag')
 
-class ITimelineBehavior(Schema):
+class ITimelineBehavior(form.Schema):
     """Add timeline configuration to content"""
     form.fieldset(
             'timeline',
