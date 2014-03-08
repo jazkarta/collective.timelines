@@ -68,3 +68,13 @@ adapter::
 There is an example of a custom ``ITimelineContent`` data provider in
 the at_content module, which handles ATEvent content by automatically
 using the start and end dates.
+
+
+Credits
+-------
+
+Alec Mitchell
+Carlos de la Guardia
+Jazkarta, Inc.
+
+With support and funding from Dumbarton Oaks, Washington DC
