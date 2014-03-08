@@ -73,8 +73,7 @@ using the start and end dates.
 Credits
 -------
 
-Alec Mitchell
-Carlos de la Guardia
-Jazkarta, Inc.
-
-With support and funding from Dumbarton Oaks, Washington DC
+* Alec Mitchell
+* Carlos de la Guardia
+* Jazkarta, Inc.
+* With support and funding from Dumbarton Oaks, Washington DC
