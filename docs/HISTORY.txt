@@ -1,7 +1,25 @@
 Changelog
 =========
 
-1.0dev (unreleased)
--------------------
+1.0 (2019-10-30)
+----------------
 
-- Initial release
+- Fix bug when field data is missing.
+
+- Documentation updates.
+
+
+1.0b1 (2013-11-08)
+------------------
+
+- Datetime formatting fixes.
+
+- Add collective.contentleadimage support.
+
+- Dexterity schema and view link fixes.
+
+
+0.5 (2013-03-07)
+----------------
+
+- Initial Release
