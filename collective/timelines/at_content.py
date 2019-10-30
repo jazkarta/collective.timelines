@@ -153,7 +153,8 @@ class TimelineContent(object):
                     data['endDate'] = '-' + data['endDate']
 
         subject = context.Subject()
-        if subject and context.getField('show_tag').get(context):
+        show_tag = context.getField('show_tag')
+        if subject and (show_tag is not None) and show_tag.get(context):
             # Take the first keyword, somewhat arbitrarily
             data['tag'] = subject[0]
 
