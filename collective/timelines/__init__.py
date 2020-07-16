@@ -26,13 +26,9 @@ def get_image_url(context, size='large'):
         image_url = None
         for image_name in ['image', 'leadImage']:
             try:
-                scale_attr = size and [size] or []
-                image = image_view.traverse(image_name, scale_attr)
-                if image is not None:
-                    image_url = '{}/@@images/{}/{}'.format(
-                        context.absolute_url().rstrip('/'),
-                        image_name, size
-                    )
+                scale = image_view.scale(fieldname=image_name, scale=size)
+                if scale is not None:
+                    image_url = scale.url
             except (AttributeError, TraversalError):
                 if IImageContent.providedBy(context):
                     image = context.getImage()
@@ -46,4 +42,4 @@ def get_image_url(context, size='large'):
                         if image:
                             image_url = image.absolute_url()
         # The library seems to prefer http urls
-        return image_url.replace('https://', 'http://')
+        return image_url
