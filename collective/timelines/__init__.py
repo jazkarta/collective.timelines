@@ -45,4 +45,5 @@ def get_image_url(context, size='large'):
                         image = handler.getScale(context, size)
                         if image:
                             image_url = image.absolute_url()
-        return image_url
+        # The library seems to prefer http urls
+        return image_url.replace('https://', 'http://')
