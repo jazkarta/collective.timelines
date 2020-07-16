@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <object name="Topic"
-   meta_type="Factory-based Type Information with dynamic views"
-   i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+        meta_type="Factory-based Type Information with dynamic views">
 
   <property name="view_methods"
                   purge="False">
@@ -9,8 +8,7 @@
   </property>
   
   <action title="Timeline Config" action_id="timeline-configuration" category="object"
-          url_expr="string:${object_url}/timeline-configuration" visible="True"
-          i18n:attributes="title">
+          url_expr="string:${object_url}/timeline-configuration" visible="True">
     <permission value="Modify portal content"/>
   </action>
 </object>

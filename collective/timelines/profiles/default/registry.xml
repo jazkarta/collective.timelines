@@ -1,0 +1,22 @@
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="collective.timelines">
+  <records interface="plone.app.querystring.interfaces.IQueryField"
+           prefix="plone.app.querystring.field.timeline_date">
+    <value key="title" i18n:translate="">Timeline Date</value>
+    <value key="description" i18n:translate="">Date used for collective.timelines timline display</value>
+    <value key="enabled">True</value>
+    <value key="sortable">True</value>
+    <value key="operations">
+      <element>plone.app.querystring.operation.date.lessThan</element>
+      <element>plone.app.querystring.operation.date.largerThan</element>
+      <element>plone.app.querystring.operation.date.between</element>
+      <element>plone.app.querystring.operation.date.lessThanRelativeDate</element>
+      <element>plone.app.querystring.operation.date.largerThanRelativeDate</element>
+      <element>plone.app.querystring.operation.date.today</element>
+      <element>plone.app.querystring.operation.date.beforeToday</element>
+      <element>plone.app.querystring.operation.date.afterToday</element>
+    </value>
+    <value key="group" i18n:translate="">Dates</value>
+  </records>
+
+</registry>
