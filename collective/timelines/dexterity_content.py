@@ -98,7 +98,6 @@ class TimeLineContent(grok.Adapter):
                 if bce:
                     data['endDate'] = '-' + data['endDate']
 
-
         subject = context.Subject()
         if subject and adapter.show_tag:
             # Take the first keyword, somewhat arbitrarily
@@ -111,13 +110,18 @@ class TimeLineContent(grok.Adapter):
         elif not ignore_date:
             # Include a url to the content
             url = context.absolute_url()
-            site_properties = getToolByName(context,
-                                            'portal_properties').site_properties
-            if (context.portal_type in
-                site_properties.typesUseViewActionInListings):
+            site_properties = getattr(
+                getToolByName(context, 'portal_properties'), 'site_properties', None
+            )
+            registry = getToolByName(self.context, 'portal_registry')
+            view_types = (
+                getattr(site_properties, 'typesUseViewActionInListings', None) or
+                registry.get('plone.types_use_view_action_in_listings', ())
+            )
+            if context.portal_type in view_types:
                 url = url + '/view'
             data['text'] = (data['text'] +
-                    ' <a href="%s">more &hellip;</a>'%url)
+                            ' <a href="%s">more &hellip;</a>' % url)
 
         image_url = get_image_url(self.context)
         # Items with Images
@@ -130,7 +134,7 @@ class TimeLineContent(grok.Adapter):
         if 'asset' in data and hasattr(context, 'image_caption'):
             data['asset']['caption'] = (
                 context.image_caption.encode('utf-8')
-                )
+            )
         # TODO: Asset 'credit'?
 
         return data

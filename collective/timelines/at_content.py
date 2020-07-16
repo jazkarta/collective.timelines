@@ -165,13 +165,18 @@ class TimelineContent(object):
         elif not ignore_date:
             # Include a url to the content
             url = context.absolute_url()
-            site_properties = getToolByName(context,
-                                            'portal_properties').site_properties
-            if (context.portal_type in
-                site_properties.typesUseViewActionInListings):
+            site_properties = getattr(
+                getToolByName(context, 'portal_properties'), 'site_properties', None
+            )
+            registry = getToolByName(self.context, 'portal_registry')
+            view_types = (
+                getattr(site_properties, 'typesUseViewActionInListings', None) or
+                registry.get('plone.types_use_view_action_in_listings', ())
+            )
+            if context.portal_type in view_types:
                 url = url + '/view'
             data['text'] = (data['text'] +
-                    ' <a href="%s">more &hellip;</a>'%url)
+                            ' <a href="%s">more &hellip;</a>' % url)
 
         image_url = get_image_url(self.context)
         # Items with Images

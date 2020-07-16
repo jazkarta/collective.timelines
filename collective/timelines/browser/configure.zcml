@@ -33,22 +33,49 @@
         description="Dislpay contents in a timeline"
         />
 
-  <browser:page
-      name="timeline-json"
-      for="Products.ATContentTypes.interfaces.IATFolder"
-      class=".view.TimelineFolderJSON"
-      permission="zope2.View"
-      />
-  <browser:page
-      name="timeline-json"
-      for="Products.ATContentTypes.interfaces.IATTopic"
-      class=".view.TimelineTopicJSON"
-      permission="zope2.View"
-      />
+  <configure zcml:condition="installed plone.app.folder">
+    <browser:page
+        name="timeline-json"
+        for="plone.app.folder.folder.IATUnifiedFolder"
+        class=".view.TimelineFolderJSON"
+        permission="zope2.View"
+        />
+  </configure>
+
+  <configure zcml:condition="installed Products.ATContentTypes">
+    <browser:page
+        name="timeline-json"
+        for="Products.ATContentTypes.interfaces.IATFolder"
+        class=".view.TimelineFolderJSON"
+        permission="zope2.View"
+        />
+    <browser:page
+        name="timeline-json"
+        for="Products.ATContentTypes.interfaces.IATTopic"
+        class=".view.TimelineTopicJSON"
+        permission="zope2.View"
+        />
+  </configure>
+
   <configure zcml:condition="installed plone.app.collection">
     <browser:page
         name="timeline-json"
         for="plone.app.collection.interfaces.ICollection"
+        class=".view.TimelineCollectionJSON"
+        permission="zope2.View"
+        />
+  </configure>
+
+  <configure zcml:condition="installed plone.app.contenttypes">
+    <browser:page
+        name="timeline-json"
+        for="plone.app.contenttypes.interfaces.IFolder"
+        class=".view.TimelineFolderJSON"
+        permission="zope2.View"
+        />
+    <browser:page
+        name="timeline-json"
+        for="plone.app.contenttypes.interfaces.ICollection"
         class=".view.TimelineCollectionJSON"
         permission="zope2.View"
         />

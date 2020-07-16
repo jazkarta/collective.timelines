@@ -26,7 +26,9 @@ class TimelineView(BrowserView):
 
     @property
     def data_url(self):
-        return '@@timeline-json'
+        return '{}/@@timeline-json'.format(
+            self.context.absolute_url().rstrip('/')
+        )
 
     @property
     def resource_base(self):

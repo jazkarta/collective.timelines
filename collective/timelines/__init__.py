@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from zope.component import getMultiAdapter
 from zope.i18nmessageid import MessageFactory
 from zope.traversing.interfaces import TraversalError
@@ -29,9 +28,11 @@ def get_image_url(context, size='large'):
             try:
                 scale_attr = size and [size] or []
                 image = image_view.traverse(image_name, scale_attr)
-                if image:
-                    # This returns an image tag, pull the src attribute
-                    image_url = ET.fromstring(image).attrib['src']
+                if image is not None:
+                    image_url = '{}/@@images/{}/{}'.format(
+                        context.absolute_url().rstrip('/'),
+                        image_name, size
+                    )
             except (AttributeError, TraversalError):
                 if IImageContent.providedBy(context):
                     image = context.getImage()
@@ -39,9 +40,9 @@ def get_image_url(context, size='large'):
                         image_url = image.absolute_url()
                 if hasattr(context, 'getField'):
                     field = context.getField('image')
-                    handler = IImageScaleHandler(field, None)
+                    handler = IImageScaleHandler(field, alternate=None)
                     if handler is not None:
                         image = handler.getScale(context, size)
                         if image:
-                           image_url = image.absolute_url()
+                            image_url = image.absolute_url()
         return image_url
