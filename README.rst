@@ -70,6 +70,14 @@ the at_content module, which handles ATEvent content by automatically
 using the start and end dates.
 
 
+Core Content Migration
+----------------------
+
+If you have extended ATCT content with this add-on and would like to preserve the data
+when migrating to plone.app.contenttypes content, you will need to apply the dexterity
+behavior `collective.timelines.dexterity_content.ITimelineBehavior` to the target
+content types before migrating.
+
 Credits
 -------
 
