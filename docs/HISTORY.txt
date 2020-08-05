@@ -8,7 +8,7 @@ Changelog
 
 - Add view registrations for plone.app.contenttype types.
 
-- Add custom migrator to migrate data from ATCT core content to plone.app.contenttypes content
+- Add custom migrator to migrate data from ATCT core content to plone.app.contenttypes content.
 
 1.0 (2019-10-30)
 ----------------

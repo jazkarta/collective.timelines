@@ -13,11 +13,14 @@ from .dexterity_content import ITimelineBehavior
 class ITimelineDataMigrator(BaseCustomMigator):
 
     def migrate(self, old, new):
-        if not ITimelineBehavior.providedBy(new):
+        adapted = ITimelineBehavior(new, alternate=None)
+        if adapted is None:
             return
-        migrate_simplefield(old, new, 'use_pub_date', 'use_pub_date')
-        migrate_datetimefield(old, new, 'timeline_date', 'timeline_date')
-        migrate_datetimefield(old, new, 'timeline_end', 'timeline_end')
-        migrate_simplefield(old, new, 'bce_year', 'bce_year')
-        migrate_simplefield(old, new, 'year_only', 'year_only')
-        migrate_simplefield(old, new, 'show_tag', 'show_tag')
+        migrate_simplefield(old, adapted, 'use_pub_date', 'use_pub_date')
+        if old.getField('timeline_date').get(old):
+            migrate_datetimefield(old, adapted, 'timeline_date', 'timeline_date')
+        if old.getField('timeline_end').get(old):
+            migrate_datetimefield(old, adapted, 'timeline_end', 'timeline_end')
+        migrate_simplefield(old, adapted, 'bce_year', 'bce_year')
+        migrate_simplefield(old, adapted, 'year_only', 'year_only')
+        migrate_simplefield(old, adapted, 'show_tag', 'show_tag')
