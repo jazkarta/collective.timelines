@@ -16,6 +16,7 @@ from collective.timelines import (timelinesMessageFactory as _,
 timeline_fields = ('use_pub_date', 'timeline_date', 'timeline_end',
                     'bce_year', 'year_only', 'show_tag')
 
+
 class ITimelineBehavior(form.Schema):
     """Add timeline configuration to content"""
     form.fieldset(
@@ -82,29 +83,31 @@ class TimeLineContent(grok.Adapter):
 
     def data(self, ignore_date=False):
         context = self.context
-        adapter = ITimelineBehavior(context)
-        bce = adapter.bce_year
-        year_only = adapter.year_only
+        adapter = ITimelineBehavior(context, None)
+
         data = {"headline": context.Title(),
                 "text": "<p>%s</p>"%context.Description(),}
 
-        if not ignore_date:
-            date = self.date()
-            if not date:
-                return
-            data['startDate'] = format_datetime(date, year_only)
-            if bce:
-                data['startDate'] = '-' + data['startDate']
-            end = self.end()
-            if end:
-                data['endDate'] = format_datetime(end, year_only)
+        if adapter is not None:
+            bce = adapter.bce_year
+            year_only = adapter.year_only
+            if not ignore_date:
+                date = self.date()
+                if not date:
+                    return
+                data['startDate'] = format_datetime(date, year_only)
                 if bce:
-                    data['endDate'] = '-' + data['endDate']
+                    data['startDate'] = '-' + data['startDate']
+                end = self.end()
+                if end:
+                    data['endDate'] = format_datetime(end, year_only)
+                    if bce:
+                        data['endDate'] = '-' + data['endDate']
 
-        subject = context.Subject()
-        if subject and adapter.show_tag:
-            # Take the first keyword, somewhat arbitrarily
-            data['tag'] = subject[0]
+            subject = context.Subject()
+            if subject and adapter.show_tag:
+                # Take the first keyword, somewhat arbitrarily
+                data['tag'] = subject[0]
 
         data['asset'] = {}
         # Links
@@ -134,7 +137,7 @@ class TimeLineContent(grok.Adapter):
                 data['asset']['media'] = image_url
 
         # News-like items
-        if 'asset' in data and hasattr(context, 'image_caption'):
+        if 'asset' in data and getattr(context, 'image_caption', None):
             data['asset']['caption'] = (
                 context.image_caption.encode('utf-8')
             )

@@ -60,12 +60,21 @@ class TimelineFolderJSON(BrowserView):
         context = aq_inner(self.context)
         base_data = {"timeline": {"type":"default",
                                   "date": []}}
-        data = ITimelineContent(context).data(ignore_date=True)
+        base_timeline = ITimelineContent(context, alternate=None)
+        if base_timeline is not None:
+            data = base_timeline.data(ignore_date=True)
+        else:
+            data = {
+                "headline": self.context.Title(),
+                "text": "<p>%s</p>" % context.Description(),
+            }
         base_data['timeline'].update(data)
-        contents = self._get_contents()
         dates = base_data['timeline']['date']
-        for item in contents:
-            item_data = ITimelineContent(item).data()
+        for item in self._get_contents():
+            timeline_adapter = ITimelineContent(item, alternate=None)
+            if timeline_adapter is None:
+                continue
+            item_data = timeline_adapter.data()
             if not item_data:
                 continue
             updaters = getAdapters((item,), ITimelineSupplement)
@@ -87,11 +96,15 @@ class TimelineTopicJSON(TimelineFolderJSON):
         return context.queryCatalog(batch=False, full_objects=True,
                                     sort_on='timeline_date')
 
+
 class TimelineCollectionJSON(TimelineFolderJSON):
     """JSON representation of topic contents"""
 
     def _get_contents(self):
         context = aq_inner(self.context)
         # Filter query on content with a timeline date set
-        return context.results(batch=False, brains=False,
-                               sort_on='timeline_date')
+        return (
+            b.getObject() for b in context.results(
+                batch=False, brains=True, sort_on='timeline_date'
+            )
+        )
