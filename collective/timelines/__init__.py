@@ -1,4 +1,3 @@
-from DateTime import DateTime
 from zope.component import getMultiAdapter
 from zope.i18nmessageid import MessageFactory
 from zope.traversing.interfaces import TraversalError
@@ -12,14 +11,10 @@ timelinesMessageFactory = MessageFactory('collective.timelines')
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
-
 def format_datetime(date, year_only=False):
-    if isinstance(date, DateTime):
-        date = date.asdatetime()
     if year_only:
-        return str(date.year)
-    return '%s,%s,%s,%s,%s' % (date.year, date.month, date.day, date.hour, date.minute)
-
+        return str(date.year())
+    return '%s,%s,%s,%s,%s'%(date.year(),date.month(),date.day(),date.hour(),date.minute())
 
 def get_image_url(context, size='large'):
     # Look at the imaging view
