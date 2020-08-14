@@ -5,7 +5,6 @@ from five import grok
 from z3c.form.interfaces import IEditForm, IAddForm
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.directives import form
-from plone.supermodel.model import Schema
 from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.utils import getToolByName
 from collective.timelines.interfaces import ITimelineContent
