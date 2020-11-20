@@ -3,7 +3,6 @@ from zope.schema import Bool, Datetime
 from DateTime import DateTime
 from five import grok
 from z3c.form.interfaces import IEditForm, IAddForm
-from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.directives import form
 from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.utils import getToolByName
@@ -28,11 +27,9 @@ class ITimelineBehavior(form.Schema):
 
     timeline_date = Datetime(title=_(u"Custom Timeline Date"),
                              required=False)
-    form.widget(timeline_date=DatetimeFieldWidget)
 
     timeline_end = Datetime(title=_(u"Timeline End Date"),
                             required=False)
-    form.widget(timeline_end=DatetimeFieldWidget)
 
     bce_year = Bool(title=_(u'Year is BCE'), default=False, required=False)
     year_only = Bool(title=_(u'Show Year Only'), default=False, required=False)
