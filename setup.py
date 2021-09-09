@@ -26,12 +26,14 @@ setup(name='collective.timelines',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'archetypes.schemaextender',
           'plone.directives.form',
           'five.grok',
           'plone.app.z3cform',
           'plone.behavior',
       ],
+      extras_require={
+            'archetypes': ['archetypes.schemaextender']
+      },
       entry_points="""[z3c.autoinclude.plugin]
 target = plone
       """,
