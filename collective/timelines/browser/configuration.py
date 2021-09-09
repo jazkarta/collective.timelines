@@ -1,7 +1,7 @@
 from zope import interface, schema
-from five import grok
 from z3c.form.interfaces import HIDDEN_MODE
-from plone.directives import form
+from z3c.form import form
+from plone.autoform.form import AutoExtensibleForm
 from plone.supermodel.model import Schema
 from plone.behavior import AnnotationStorage
 from Products.CMFCore.utils import getToolByName
@@ -30,11 +30,7 @@ class ITimelineSettings(Schema):
 TimelineStorage = AnnotationStorage(ITimelineSettings)
 
 
-class TimelineConfigurationForm(form.SchemaEditForm):
-    grok.name('timeline-configuration')
-    grok.require('cmf.ModifyPortalContent')
-    grok.context(interface.Interface)
-
+class TimelineConfigurationForm(AutoExtensibleForm, form.Form):
     schema = ITimelineSettings
     label = _(u"Timeline Settings")
     description = _(u"Settings for timeline view")

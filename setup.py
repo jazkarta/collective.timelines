@@ -27,7 +27,6 @@ setup(name='collective.timelines',
           'setuptools',
           # -*- Extra requirements: -*-
           'plone.directives.form',
-          'five.grok',
           'plone.app.z3cform',
           'plone.behavior',
       ],

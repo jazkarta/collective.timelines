@@ -26,6 +26,10 @@ handle most use cases.  However, you may customize the timeline
 metadata for specific content types by registering adapters to the
 ``ITimelineContent`` and/or ``ITimelineSupplement`` interfaces.
 
+
+Note: Grok is no longer supported with Python 3. The examples below
+need to be adapted to use `zcml` files.
+
 For example if I wanted to change the asset url for my IFoo content type
 I would simply add the following to a grokked package::
 

@@ -1,7 +1,6 @@
 from zope.interface import alsoProvides
 from zope.schema import Bool, Datetime
 from DateTime import DateTime
-from five import grok
 from z3c.form.interfaces import IEditForm, IAddForm
 from plone.directives import form
 from plone.dexterity.interfaces import IDexterityContent
@@ -43,9 +42,9 @@ class ITimelineBehavior(form.Schema):
 alsoProvides(ITimelineBehavior, form.IFormFieldProvider)
 
 
-class TimeLineContent(grok.Adapter):
-    grok.provides(ITimelineContent)
-    grok.context(IDexterityContent)
+class TimeLineContent(object):
+    def __init__(self, context):
+        self.context = context
 
     def date(self):
         date = None

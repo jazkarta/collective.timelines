@@ -1,13 +1,16 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.timelines">
 
-  <grok:grok package="." />
-
+  <browser:page
+    for="zope.interface.Interface"
+    name="timeline-configuration"
+    permission="cmf.ModifyPortalContent"
+    class=".configuration.TimelineConfigurationForm"
+  />
   <adapter factory=".configuration.TimelineStorage"
            for="zope.interface.Interface"
            provides=".configuration.ITimelineSettings"
