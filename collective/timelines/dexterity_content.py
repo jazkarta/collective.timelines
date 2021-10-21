@@ -2,7 +2,10 @@ from zope.interface import alsoProvides
 from zope.schema import Bool, Datetime
 from DateTime import DateTime
 from z3c.form.interfaces import IEditForm, IAddForm
-from plone.directives import form
+from plone.autoform import directives
+from plone.autoform.interfaces import IFormFieldProvider
+from plone.supermodel.directives import fieldset
+from plone.supermodel.model import Schema
 from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.utils import getToolByName
 from collective.timelines.interfaces import ITimelineContent
@@ -14,13 +17,13 @@ timeline_fields = ('use_pub_date', 'timeline_date', 'timeline_end',
                     'bce_year', 'year_only', 'show_tag')
 
 
-class ITimelineBehavior(form.Schema):
+class ITimelineBehavior(Schema):
     """Add timeline configuration to content"""
-    form.fieldset(
-            'timeline',
-            label=_(u'Timeline Config'),
-            fields=timeline_fields,
-            )
+    fieldset(
+        'timeline',
+        label=_(u'Timeline Config'),
+        fields=timeline_fields,
+        )
 
     use_pub_date = Bool(title=_(u"Use Publication Date(s)"))
 
@@ -34,12 +37,12 @@ class ITimelineBehavior(form.Schema):
     year_only = Bool(title=_(u'Show Year Only'), default=False, required=False)
     show_tag = Bool(title=_(u'Show first tag in timeline'),
                     default=False, required=False)
-    form.omitted(*timeline_fields)
-    form.no_omit(IEditForm, *timeline_fields)
-    form.no_omit(IAddForm, *timeline_fields)
+    directives.omitted(*timeline_fields)
+    directives.no_omit(IEditForm, *timeline_fields)
+    directives.no_omit(IAddForm, *timeline_fields)
 
 
-alsoProvides(ITimelineBehavior, form.IFormFieldProvider)
+alsoProvides(ITimelineBehavior, IFormFieldProvider)
 
 
 class TimeLineContent(object):

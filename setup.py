@@ -26,7 +26,6 @@ setup(name='collective.timelines',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'plone.directives.form',
           'plone.app.z3cform',
           'plone.behavior',
       ],
