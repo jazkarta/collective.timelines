@@ -3,11 +3,14 @@ from zope.i18nmessageid import MessageFactory
 from zope.traversing.interfaces import TraversalError
 try:
     from Products.ATContentTypes.interfaces import IImageContent
+    from plone.app.imaging.interfaces import IImageScaleHandler
 except ImportError:
     from zope.interface import Interface
+
     class IImageContent(Interface):
         pass
-from plone.app.imaging.interfaces import IImageScaleHandler
+
+    IImageScaleHandler = IImageContent
 
 
 timelinesMessageFactory = MessageFactory('collective.timelines')
@@ -15,6 +18,7 @@ timelinesMessageFactory = MessageFactory('collective.timelines')
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""
+
 
 def format_datetime(date, year_only=False):
     if year_only:
