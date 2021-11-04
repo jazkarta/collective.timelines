@@ -1,7 +1,12 @@
 from zope.component import getMultiAdapter
 from zope.i18nmessageid import MessageFactory
 from zope.traversing.interfaces import TraversalError
-from Products.ATContentTypes.interfaces import IImageContent
+try:
+    from Products.ATContentTypes.interfaces import IImageContent
+except ImportError:
+    from zope.interface import Interface
+    class IImageContent(Interface):
+        pass
 from plone.app.imaging.interfaces import IImageScaleHandler
 
 

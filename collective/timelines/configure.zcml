@@ -34,9 +34,11 @@
       description="Removes actions from types">
   </genericsetup:importStep>
 
-  <adapter factory=".at_content.TimelineExtender" />
-  <adapter factory=".at_content.TimelineContent" />
-  <adapter factory=".at_content.EventTimelineContent" />
+  <configure zcml:condition="installed Products.ATContentTypes">
+    <adapter factory=".at_content.TimelineExtender" />
+    <adapter factory=".at_content.TimelineContent" />
+    <adapter factory=".at_content.EventTimelineContent" />
+  </configure>
 
   <configure zcml:condition="installed plone.dexterity">
     <adapter
