@@ -110,7 +110,7 @@ class TimeLineContent(object):
         data['asset'] = {}
         # Links
         if hasattr(context, 'remoteUrl'):
-            data['asset']['media'] = context.remoteUrl.encode('utf-8')
+            data['asset']['media'] = context.remoteUrl
         elif not ignore_date:
             # Include a url to the content
             url = context.absolute_url()
@@ -137,7 +137,7 @@ class TimeLineContent(object):
         # News-like items
         if 'asset' in data and getattr(context, 'image_caption', None):
             data['asset']['caption'] = (
-                context.image_caption.encode('utf-8')
+                context.image_caption
             )
         # TODO: Asset 'credit'?
 
