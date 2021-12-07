@@ -60,7 +60,7 @@
              />
   </configure>
 
-  <configure zcml:condition="installed plone.app.contenttypes">
+  <configure zcml:condition="installed Products.contentmigration">
     <adapter factory=".migration.ITimelineDataMigrator" name="collective-timeline" />
   </configure>
 

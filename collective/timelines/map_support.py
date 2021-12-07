@@ -5,8 +5,9 @@ from collective.timelines.interfaces import ITimelineSupplement
 
 MAP_BASE = 'http://maps.google.com/maps?f=q&q=%s,%s'
 
+
+@interface.implementer(ITimelineSupplement)
 class MapTimlineUpdater(object):
-    interface.implements(ITimelineSupplement)
 
     def __init__(self, context):
         self.context = context

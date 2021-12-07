@@ -36,7 +36,7 @@
         description="Dislpay contents in a timeline"
         />
 
-  <configure zcml:condition="installed plone.app.folder">
+  <configure zcml:condition="installed plone.app.folder.folder">
     <browser:page
         name="timeline-json"
         for="plone.app.folder.folder.IATUnifiedFolder"
