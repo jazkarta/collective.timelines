@@ -83,8 +83,8 @@ class TimeLineContent(object):
         context = self.context
         adapter = ITimelineBehavior(context, None)
 
-        data = {"headline": context.Title(),
-                "text": "<p>%s</p>"%context.Description(),}
+        data = {"headline": context.title,
+                "text": "<p>%s</p>"%context.description}
 
         if adapter is not None:
             bce = adapter.bce_year
